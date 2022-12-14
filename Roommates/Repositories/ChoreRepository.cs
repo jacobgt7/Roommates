@@ -89,6 +89,42 @@ namespace Roommates.Repositories
             }
         }
 
+        public void Update(Chore chore)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Chore
+                                        SET Name = @name
+                                        WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", chore.Id);
+                    cmd.Parameters.AddWithValue("@name", chore.Name);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Delete(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM RoommateChore WHERE ChoreId = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+
+                    cmd.CommandText = "DELETE FROM Chore WHERE Id = @id";
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public List<Chore> GetUnassignedChores()
         {
             using (SqlConnection conn = Connection)
@@ -148,5 +184,7 @@ namespace Roommates.Repositories
                 }
             }
         }
+
+
     }
 }
